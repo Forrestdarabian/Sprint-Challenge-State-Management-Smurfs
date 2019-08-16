@@ -1,16 +1,39 @@
-import React, { Component } from "react";
+import React, { Component, useState, useEffect } from "react";
 import "./App.css";
-class App extends Component {
-  render() {
-    return (
-      <div className="App">
-        <h1>SMURFS! 2.0 W/ Redux</h1>
-        <div>Welcome to your state management version of Smurfs!</div>
-        <div>Start inside of your `src/index.js` file!</div>
-        <div>Have fun!</div>
-      </div>
-    );
-  }
+import { connect } from 'react-redux';
+import { getApod } from './actions.js/index';
+import axios from 'axios';
+
+
+function App(props) {
+  console.log(props);
+  const [smurf, setSmurf] = useState("");
+  return (
+    <div className="App">
+      <h1> Smurf Village </h1>
+      <input type="text"
+             placeholder="New Smurf"
+             value={smurf}
+             onChange={e => setSmurf(e.target.value)}/>
+      {props.loading && <div>loading...</div>}
+      {props.apod && (
+        <div>
+          <img src={props.apod.url}/>
+          <p>{props.apod.explanation}</p>
+        </div>)}
+      {props.error !== "" && <p>{props.error}</p>}
+      <button onClick={() => props.getApod(smurf)}>Add a new smurf</button>
+    </div>
+  );
 }
 
-export default App;
+const mapStateToProps = state => {
+  return {
+    apod: state.apod,
+    error: state.error,
+    loading: state.loading
+  };
+};
+
+export default connect(mapStateToProps, { getApod })(App);
+
