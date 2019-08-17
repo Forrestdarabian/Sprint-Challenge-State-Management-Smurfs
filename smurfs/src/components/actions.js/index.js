@@ -1,14 +1,26 @@
-
 import axios from 'axios';
-export const FETCH_APOD_START = "FETCH_APOD_START";
-export const FETCH_APOD_SUCCESS = "FETCH_APOD_SUCCESS";
-export const FETCH_APOD_FAILURE = "FETCH_APOD_FAILURE";
+export const ERROR = 'ERROR';
+export const GET_SMURFS = 'GET_SMURFS'
+export const ADD_SMURF = 'ADD_SMURF'
 
-export const getApod = (smurfs) => dispatch => {
-  dispatch({ type: FETCH_APOD_START });
-  axios.get('/smurfs')
-    .then(res => dispatch({ type: FETCH_APOD_SUCCESS, payload: res.data }))
-    .catch(error => {
-      dispatch({ type: FETCH_APOD_FAILURE, payload: error.response.data.msg });
-    });
-};
+export const getSmurfs = () => dispatch => {
+  axios.get('http://localhost:3333/smurfs')
+  .then(response => {
+    console.log(response.data)
+    dispatch({type: GET_SMURFS, payload: response.data})
+  })
+  .catch(err => {
+dispatch({type: ERROR, payload: err.errorMessage})
+})
+}
+
+export const addSmurf = newSmurf => dispatch => {
+axios.post('http://localhost:3333/smurfs', newSmurf)
+.then(response => {
+  console.log(response.data)
+  dispatch({type: ERROR, payload: response.data})
+})
+.catch(err => {
+  dispatch({ type: ERROR, payload: err.errorMessage })
+})
+}
